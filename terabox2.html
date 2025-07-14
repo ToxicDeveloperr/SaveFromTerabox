@@ -43,33 +43,34 @@
       const loading = document.getElementById("loading");
       const resultBox = document.getElementById("resultBox");
       const errorBox = document.getElementById("errorBox");
-
+  
       // Reset state
       resultBox.classList.add("hidden");
       errorBox.classList.add("hidden");
-
+  
       if (!url) return alert("Please enter a TeraBox link");
-
+  
       const apiUrl = `https://vercel-api-2-ecru.vercel.app/api/fetch?url=${encodeURIComponent(url)}`;
       loading.classList.remove("hidden");
-
+  
       try {
         const res = await fetch(apiUrl);
         const data = await res.json();
-
+  
         loading.classList.add("hidden");
-
-        if (!data || data.error || !data.file_name || !data.proxy_url) {
+  
+        if (!data || data.error || typeof data.proxy_url !== "string" || !data.proxy_url.startsWith("https")) {
           errorBox.classList.remove("hidden");
           return;
         }
-
+  
         document.getElementById("fileName").textContent = data.file_name || "N/A";
         document.getElementById("fileSize").textContent = data.file_size || "N/A";
         document.getElementById("thumbnail").src = data.thumbnail || "";
         document.getElementById("downloadLink").href = data.proxy_url || "#";
+  
         resultBox.classList.remove("hidden");
-
+  
       } catch (err) {
         loading.classList.add("hidden");
         console.error(err);
