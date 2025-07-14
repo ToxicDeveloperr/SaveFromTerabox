@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SaveFromTeraBox - Fast & Free TeraBox Downloader. Paste your TeraBox link and download videos or files in seconds.">
+  <meta name="keywords" content="terabox downloader, savefromterabox, download terabox file, terabox video downloader">
+  <meta name="author" content="SaveFromTeraBox">
+  <title>SaveFromTeraBox - Free TeraBox Downloader</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-start py-10">
+  <h1 class="text-3xl font-bold text-blue-400 mb-6">SaveFromTeraBox</h1>
+  <p class="mb-4 text-center px-4">Free TeraBox File Downloader. Paste your TeraBox link below to get download info.</p>
+  <div class="w-full max-w-xl px-4">
+    <input id="linkInput" type="text" placeholder="Paste TeraBox Link Here" class="w-full p-3 text-black rounded shadow mb-4">
+    <button onclick="getDownloadInfo()" class="bg-blue-500 hover:bg-blue-600 w-full p-3 rounded font-semibold transition">Get Download Link</button>
+  </div>
+
+  <div id="resultBox" class="mt-8 max-w-xl w-full px-4 hidden">
+    <h2 class="text-xl font-bold text-green-400 mb-2">Download Details</h2>
+    <img id="thumbnail" src="" alt="Thumbnail" class="rounded w-full mb-4">
+    <p><strong>File Name:</strong> <span id="fileName"></span></p>
+    <p><strong>Size:</strong> <span id="fileSize"></span></p>
+    <a id="downloadLink" href="#" target="_blank" class="mt-4 inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Download Now</a>
+  </div>
+
+  <footer class="mt-12 text-sm text-gray-400">&copy; 2025 SaveFromTeraBox. All rights reserved.</footer>
+
+  <script>
+    async function getDownloadInfo() {
+      const url = document.getElementById('linkInput').value.trim();
+      if (!url) return alert("Please enter a TeraBox link");
+
+      const apiUrl = `https://vercel-api-2-ecru.vercel.app/api/fetch?url=${encodeURIComponent(url)}`;
+
+      try {
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+
+        if (data.file_name && data.proxy_url && data.thumbnail) {
+          document.getElementById('fileName').textContent = data.file_name;
+          document.getElementById('fileSize').textContent = data.file_size;
+          document.getElementById('thumbnail').src = data.thumbnail;
+          document.getElementById('downloadLink').href = data.proxy_url;
+          document.getElementById('resultBox').classList.remove('hidden');
+        } else {
+          alert("Failed to fetch file info. Please check the link.");
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
