@@ -12,6 +12,7 @@
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-start py-10">
   <h1 class="text-3xl font-bold text-blue-400 mb-6">SaveFromTeraBox</h1>
   <p class="mb-4 text-center px-4">Free TeraBox File Downloader. Paste your TeraBox link below to get download info.</p>
+
   <div class="w-full max-w-xl px-4">
     <input id="linkInput" type="text" placeholder="Paste TeraBox Link Here" class="w-full p-3 text-black rounded shadow mb-4">
     <button onclick="getDownloadInfo()" class="bg-blue-500 hover:bg-blue-600 w-full p-3 rounded font-semibold transition">Get Download Link</button>
@@ -31,27 +32,30 @@
     async function getDownloadInfo() {
       const url = document.getElementById('linkInput').value.trim();
       if (!url) return alert("Please enter a TeraBox link");
-  
-      // Send URL exactly as the user entered it (encoded)
+
       const apiUrl = `https://vercel-api-2-ecru.vercel.app/api/fetch?url=${encodeURIComponent(url)}`;
-  
+
       try {
         const res = await fetch(apiUrl);
         const data = await res.json();
-  
+
         if (data.error) {
           alert("Error: " + data.error);
           return;
         }
-  
-        // Populate UI with API response
-        document.getElementById("filename").textContent = data.file_name || "N/A";
-        document.getElementById("filesize").textContent = data.file_size || "N/A";
+
+        // ✅ Matching correct IDs and fields
+        document.getElementById("fileName").textContent = data.file_name || "N/A";
+        document.getElementById("fileSize").textContent = data.file_size || "N/A";
         document.getElementById("thumbnail").src = data.thumbnail || "";
-        document.getElementById("downloadBtn").href = data.proxy_url || "#";
+        document.getElementById("downloadLink").href = data.proxy_url || "#";
+
+        // ✅ Show result box
+        document.getElementById("resultBox").classList.remove("hidden");
+
       } catch (err) {
         console.error(err);
-        alert("Something went wrong!");
+        alert("Something went wrong while fetching download info.");
       }
     }
   </script>
